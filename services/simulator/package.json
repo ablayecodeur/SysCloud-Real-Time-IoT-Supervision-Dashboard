@@ -1,0 +1,18 @@
+{
+  "name": "syscloud-simulator",
+  "version": "1.0.0",
+  "description": "Virtual IoT device fleet for development and testing",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "mqtt": "^5.10.1",
+    "pino": "^9.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
