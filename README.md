@@ -1,6 +1,6 @@
 # SysCloud — Real-Time IoT Supervision Dashboard
 
-[![CI](https://github.com/YOUR_USERNAME/SysCloud/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/SysCloud/actions/workflows/ci.yml)
+[![CI](https://github.com/ablayecodeur/SysCloud-Real-Time-IoT-Supervision-Dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/ablayecodeur/SysCloud-Real-Time-IoT-Supervision-Dashboard/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](docker-compose.yml)
 [![InfluxDB](https://img.shields.io/badge/InfluxDB-2.7-22ADF6?logo=influxdb&logoColor=white)](https://www.influxdata.com/)
@@ -107,7 +107,7 @@ syscloud/devices/{device_id}/status      ← online flag, battery, RSSI, uptime
 ### 1 — Clone & setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/SysCloud.git
+git clone https://github.com/ablayecodeur/SysCloud-Real-Time-IoT-Supervision-Dashboard.git
 cd SysCloud
 
 make setup   # copies .env.example → .env and generates strong secrets
