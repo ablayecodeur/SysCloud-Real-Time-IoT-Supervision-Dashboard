@@ -26,8 +26,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: |
-            services/${{ matrix.service }}/package.json
-            frontend/package.json
+            services/*/package-lock.json
+            frontend/package-lock.json
 
       - name: Install deps — ${{ matrix.service }}
         working-directory: ${{ matrix.service == 'frontend' && 'frontend' || format('services/{0}', matrix.service) }}
@@ -85,6 +85,15 @@ jobs:
           sed -i 's/change_me_influx_super_secret_token/ci_token/g' .env
           sed -i 's/change_me_grafana_password/ci_grafana_pass/g' .env
           sed -i 's/change_me_jwt_super_secret_key_32chars_min/ci_jwt_secret_at_least_32_chars_long/g' .env
+
+      # mosquitto.passwd is gitignored: without it the broker exits at
+      # startup and every service that depends on it never starts.
+      - name: Create Mosquitto password file
+        run: |
+          docker run --rm \
+            -v "$PWD/services/mqtt-broker/config:/mosquitto/config" \
+            eclipse-mosquitto:2.0.18-openssl \
+            sh -c 'mosquitto_passwd -b -c /mosquitto/config/mosquitto.passwd syscloud ci_mqtt_pass && chown mosquitto:mosquitto /mosquitto/config/mosquitto.passwd'
 
       - name: Start core services
         run: |

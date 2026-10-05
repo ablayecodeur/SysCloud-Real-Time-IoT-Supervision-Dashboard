@@ -71,7 +71,7 @@ export function SensorChart({ data, field, unit = '', color = COLORS[0] }: Senso
             key={id}
             type="monotone"
             dataKey={id}
-            stroke={COLORS[i % COLORS.length]}
+            stroke={isSingle ? color : COLORS[i % COLORS.length]}
             dot={false}
             strokeWidth={2}
             connectNulls
