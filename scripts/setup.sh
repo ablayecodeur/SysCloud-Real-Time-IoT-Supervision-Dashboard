@@ -74,16 +74,20 @@ MQTT_USER=$(grep '^MQTT_USER=' "$ENV_FILE" | cut -d= -f2)
 MQTT_PASS=$(grep '^MQTT_PASSWORD=' "$ENV_FILE" | cut -d= -f2)
 PASSWD_FILE="services/mqtt-broker/config/mosquitto.passwd"
 
-if docker image inspect eclipse-mosquitto:2.0.18-openssl &>/dev/null 2>&1; then
-  docker run --rm \
-    -v "$(pwd)/services/mqtt-broker/config:/mosquitto/config" \
-    eclipse-mosquitto:2.0.18-openssl \
-    mosquitto_passwd -b -c /mosquitto/config/mosquitto.passwd "$MQTT_USER" "$MQTT_PASS"
-  info "Created Mosquitto password file for user: $MQTT_USER"
-else
-  warn "Mosquitto image not pulled yet — password file will be created on first \`make dev\`"
-  warn "Or run: docker pull eclipse-mosquitto:2.0.18-openssl && bash scripts/setup.sh"
-fi
+# Run as the current user, not root: as root, the image's entrypoint takes
+# ownership of the whole config folder (including the tracked mosquitto.conf)
+# and the password file ends up unreadable by the broker.
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -e MQTT_USER="$MQTT_USER" \
+  -e MQTT_PASS="$MQTT_PASS" \
+  -v "$(pwd)/services/mqtt-broker/config:/mosquitto/config" \
+  eclipse-mosquitto:2.0.18-openssl \
+  sh -c 'mosquitto_passwd -b -c /mosquitto/config/mosquitto.passwd "$MQTT_USER" "$MQTT_PASS"'
+# The broker container reads this file as the `mosquitto` user through a
+# read-only mount, so it must be world-readable (it only holds a password hash).
+chmod 644 "$PASSWD_FILE"
+info "Created Mosquitto password file for user: $MQTT_USER"
 
 echo ""
 echo -e "${BOLD}Setup complete.${RESET} Run ${BOLD}make dev${RESET} to start (or ${BOLD}make dev-sim${RESET} to include the IoT simulator)."
