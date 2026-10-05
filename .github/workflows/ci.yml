@@ -97,9 +97,7 @@ jobs:
 
       - name: Start core services
         run: |
-          docker compose up --build -d mosquitto influxdb
-          docker compose wait influxdb || true
-          sleep 20
+          docker compose up --build -d --wait mosquitto influxdb
 
       - name: Health check — InfluxDB
         run: docker exec syscloud-influxdb influx ping
